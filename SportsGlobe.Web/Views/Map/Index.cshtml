@@ -1,0 +1,45 @@
+﻿@{
+    Layout = "_MapLayout";
+}
+
+<div id="map" style="width:100vw;height:100vh">
+    Please wait for the map to load.
+</div>
+
+@section Styles
+{
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+}
+
+@section Scripts
+{
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script>
+        let map = L.map('map').setView([51.505, -0.09], 2);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        let markers = L.markerClusterGroup();
+        // add data from the api
+        let teams = fetch("/api/teams")
+            .then((response) => { return response.json(); })
+            .then((data) => {
+                data.forEach((d) => {
+                    markers.addLayer(
+                        L.marker([d.stadium.latitude, d.stadium.longitude])
+                        .addTo(map)
+                        .bindPopup(d.name));
+                }
+                );
+            });
+            map.addLayer(markers);
+    </script>
+
+}

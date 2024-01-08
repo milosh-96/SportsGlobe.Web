@@ -1,0 +1,45 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+    min-height: 100%;
+    position: relative;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+
+header#top-header {
+    background: #333;
+    border-radius: 16px;
+    color:#fff;
+    padding: 10px;
+    position: absolute;
+    right: 5vw;
+    text-align:center;
+    top: 16px;
+    width: 50vw;
+    z-index: 999;
+}
+
+
+@media(min-width:768px) {
+}
+
+@media(min-width:992px) {
+    header#top-header {
+        width: 10vw;
+    }
+}
+
+@media(min-width:1200px) {
+}

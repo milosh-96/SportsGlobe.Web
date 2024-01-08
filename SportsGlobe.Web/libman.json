@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "leaflet@1.9.4",
+      "destination": "wwwroot/lib/leaflet",
+      "files": ["leaflet.min.js","leaflet.min.css"]
+    },
+    {
+      "library": "leaflet.markercluster@1.5.3",
+      "destination": "wwwroot/lib/leaflet-markercluster",
+      "files": [
+        "leaflet.markercluster.min.js",
+        "MarkerCluster.css",
+        "MarkerCluster.Default.css",
+      ]
+    }
+  ]
+}

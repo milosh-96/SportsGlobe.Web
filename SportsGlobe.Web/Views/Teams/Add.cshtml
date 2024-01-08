@@ -1,0 +1,19 @@
+﻿@using SportsGlobe.Web.ViewModels.Teams
+@model AddTeamViewModel
+
+<div>
+    <form>
+        <select>
+            @foreach (var item in Model.Sports)
+            {
+                <optgroup label="@item.Name">
+                    @foreach (var s in item.Stadiums)
+                    {
+                        <option>@s.Name</option>
+                    }
+                </optgroup>
+            }
+        </select>
+    </form>
+
+</div>

@@ -1,0 +1,39 @@
+﻿@using SportsGlobe.Web.Domain
+@using SportsGlobe.Web.ViewModels.Stadiums
+@model List<Stadium>
+
+@{
+    AddStadiumViewModel addStadiumViewModel = new AddStadiumViewModel()
+            {
+                Sports = (List<Sport>)ViewData["Sports"]
+            };
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Sports</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    <a href="https://www.openstreetmap.org/#map=17/@item.Coordinate.Latitude/@item.Coordinate.Longitude" target="_blank">
+                        @item.Coordinate.ToString()
+                    </a>
+                </td>
+                <td>@string.Join(",",item.Sports.Select(x=>x.Name).ToList())</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<hr />
+<h2>Quick Add New</h2>
+
+<partial name="Partials/_Add" model="addStadiumViewModel" />

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsGlobe.Web.Data;
 using SportsGlobe.Web.Domain;
@@ -6,6 +7,7 @@ using SportsGlobe.Web.ViewModels.Teams;
 
 namespace SportsGlobe.Web.Controllers
 {
+    [Authorize]
     public class TeamsController : Controller
     {
         private readonly ApplicationDbContext _context;

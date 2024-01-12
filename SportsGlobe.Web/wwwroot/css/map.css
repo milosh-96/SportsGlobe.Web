@@ -1,4 +1,7 @@
-﻿.map__div-icon {
+﻿body {
+    margin-bottom:0;
+}
+.map__div-icon {
     background: rgba(0,0,0,0.7);
     border-radius: 8px;
     box-shadow: 2px 2px 2px rgba(0,0,0,0.7);

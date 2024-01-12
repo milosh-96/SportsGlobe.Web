@@ -11,15 +11,30 @@
 </head>
 <body>
     <header id="top-header">
-        Sports Globe
+        <div class="top-header__logo">
+            Sports Globe
+        </div>
     </header>
     
     <main role="main">
         @RenderBody()
     </main>
+    <footer style="bottom:0; left: 0; position:absolute; z-index:999">
+        <nav>
+            <a asp-controller="Home" asp-action="About">About Us</a>
+            <a asp-controller="Home" asp-action="Contribute">Contribute</a>
+            <a asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </nav>
+        <div>
+            &copy; @DateTime.UtcNow.Year - Sports Globe.
+        </div>
+    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

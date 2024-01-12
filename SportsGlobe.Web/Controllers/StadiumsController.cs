@@ -21,7 +21,7 @@ namespace SportsGlobe.Web.Controllers
             ViewData["Title"] = "All Stadiums";
             var sports = _context.Sports.ToList();
             ViewData["Sports"] = sports;
-            return View(_context.Stadiums.Include(x=>x.Sports).Take(100).ToList());
+            return View(_context.Stadiums.OrderBy(x=>x.Latitude).ThenBy(x=>x.Longitude).Include(x=>x.Sports).Take(100).ToList());
         }
 
         [HttpGet]
@@ -72,6 +72,7 @@ namespace SportsGlobe.Web.Controllers
             }
             if(_context.SaveChanges() > 0)
             {
+                TempData["Status"] = "Stadium has been added successfully.";
                 return RedirectToAction("Index");
             }
             throw new Exception("There was an error!");

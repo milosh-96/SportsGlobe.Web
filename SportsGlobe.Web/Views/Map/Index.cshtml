@@ -1,10 +1,12 @@
 ﻿@{
     Layout = "_MapLayout";
 }
-
-<div id="map" style="width:100vw;height:100vh">
+<div id="map" style="width:auto;height:100vh;">
     Please wait for the map to load.
+    <div id="cluster-preview" class="map__cluster-preview"><!--this is placeholder for cluster preview--></div>
+
 </div>
+
 
 @section Styles
 {
@@ -13,6 +15,7 @@
           crossorigin="" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="/css//map.css" type="text/css" />
 }
 
 @section Scripts
@@ -22,24 +25,84 @@
             crossorigin=""></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <script>
-        let map = L.map('map').setView([51.505, -0.09], 2);
+        let map = L.map('map', {minZoom: 2}).setView([51.505, -0.09], 5);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-        let markers = L.markerClusterGroup();
+        let markers = L.markerClusterGroup({ maxClusterRadius: 30 });
         // add data from the api
         let teams = fetch("/api/teams")
             .then((response) => { return response.json(); })
             .then((data) => {
                 data.forEach((d) => {
+                    // html of popup //
+                    let content = '<div><strong>' + d.name + '</strong><p>Sport: ' + d.sport.name + '</p><p>Stadium: ' + d.stadium.name + '</p></div>';
+                    // create leaflet popup
+                    p = new L.Popup({ }).setContent(content);
+                    
+                    // set icon //
+                    icon = new L.Icon({
+                        iconUrl:d.logoUrl + "/32",
+                        iconSize: [32,32],
+                        anchor: [15,15]
+                    });
+                    // add marker to the layer
+
+                    // marker
+                    let marker = L.marker([d.stadium.latitude, d.stadium.longitude], { icon: icon, title: d.name }).bindPopup(p)
+                    marker.on('mouseover', function (e) {
+                        this.openPopup();
+                    });
+                    marker.on('mouseout', function (e) {
+                        this.closePopup();
+                    });
                     markers.addLayer(
-                        L.marker([d.stadium.latitude, d.stadium.longitude])
-                        .addTo(map)
-                        .bindPopup(d.name));
+                        marker
+                    );
+
+                    // show preview of the cluster when mouse is over the cluster circle
+                    markers.on('clustermouseover', function (e) {
+                       
+                        teams = [];
+                        e.layer.getAllChildMarkers().forEach((m) => { teams.push(m.options.title); });
+                        console.log(e.containerPoint);
+
+                        clusterPreview = document.getElementById("cluster-preview");
+                        
+                        // hide already opened preview before opening this one
+                        clusterPreview.style.display = "none";
+                        
+                        // clear the contents of the div if other previews were opened
+                        clusterPreview.innerHTML = "";
+
+                        // show the preview
+                        clusterPreview.style.display = "block";
+
+                        // set the preview's location to the cluster location
+                        clusterPreview.style.left = e.containerPoint.x + 'px';
+                        clusterPreview.style.top = e.containerPoint.y + 'px';
+
+                        // init output holder
+                        output = "";
+
+                        // add each team to the output
+                        teams.sort().forEach(t => { output += '<p class="map__cluster-preview-item">' + t + '</p>' });
+
+                        clusterPreview.innerHTML = output;
+
+                    });
+                   
                 }
                 );
+
+                // hide preview when mouse leaves the cluster circle
+                markers.on('clustermouseout', function (e) {
+                    clusterPreview = document.getElementById("cluster-preview");
+                    clusterPreview.style.display = "none";
+                });
             });
-            map.addLayer(markers);
+        map.addLayer(markers);
+            
     </script>
 
 }

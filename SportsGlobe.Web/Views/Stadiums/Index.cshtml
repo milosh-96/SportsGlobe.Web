@@ -8,7 +8,13 @@
                 Sports = (List<Sport>)ViewData["Sports"]
             };
 }
+<h3>Quick Add New</h3>
 
+<partial name="Partials/_Add" model="addStadiumViewModel" />
+
+<hr />
+
+<h3>Index</h3>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -33,7 +39,3 @@
     </tbody>
 </table>
 
-<hr />
-<h2>Quick Add New</h2>
-
-<partial name="Partials/_Add" model="addStadiumViewModel" />

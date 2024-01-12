@@ -21,7 +21,9 @@ namespace SportsGlobe.Web.Areas.Api.Controllers
         public async Task<IActionResult> Get()
         {
             List<Team> teams = new List<Team>();
-            teams.AddRange(await _dbContext.Teams.Include(x=>x.Stadium).ToListAsync());
+            teams.AddRange(await _dbContext.Teams
+                .Include(x=>x.Stadium)
+                .Include(x=>x.Sport). ToListAsync());
             return new JsonResult(teams);
         }
     }

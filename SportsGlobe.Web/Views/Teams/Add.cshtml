@@ -1,19 +1,47 @@
 ﻿@using SportsGlobe.Web.ViewModels.Teams
 @model AddTeamViewModel
 
-<div>
-    <form>
-        <select>
-            @foreach (var item in Model.Sports)
-            {
-                <optgroup label="@item.Name">
-                    @foreach (var s in item.Stadiums)
+<div style="min-height:70vh">
+    <div class="col col-md-4 mx-auto">
+        <form>
+            <div class="form-group mb-3">
+                <label asp-for="SelectedSportId" class="visually-hidden-focusable">Select Sport: </label>
+                <select asp-for="SelectedSportId" class="form-control" onchange="this.form.submit()" required>
+                    <option disabled selected>--Select Sport--</option>
+                    @foreach (var item in Model.Sports)
                     {
-                        <option>@s.Name</option>
+                        <option value="@item.Id">@item.Name</option>
                     }
-                </optgroup>
-            }
-        </select>
-    </form>
+                </select>
+            </div>
+        </form>
 
+        <p class="text-danger">The form will reset if sport is changed.</p>
+        @if (Model.SelectedSport != null)
+        {
+            <form method="post">
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="visually-hidden-focusable"></label>
+                    <input asp-for="Name" autocomplete="off" autofocus="on" class="form-control" placeholder="Team Name" required type="text" />
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="LogoUrl">Logo URL</label>
+                    <input asp-for="LogoUrl" autocomplete="off" class="form-control" placeholder="Enter logo URL" type="url" />
+                </div>
+                <input asp-for="SelectedSportId" type="hidden" />
+                <div class="form-group mb-3">
+                    <select asp-for="SelectedStadiumId" class="form-control" required>
+                        <option disabled selected>--Select Stadium--</option>
+                        <optgroup label="@Model.SelectedSport.Name">
+                            @foreach (var s in Model.SelectedSport.Stadiums)
+                            {
+                                <option value="@s.Id">@s.Name</option>
+                            }
+                        </optgroup>
+                    </select>
+                </div>
+                <button class="btn btn-primary w-100">Add</button>
+            </form>
+        }
+    </div>
 </div>

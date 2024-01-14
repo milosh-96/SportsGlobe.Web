@@ -31,6 +31,15 @@ namespace SportsGlobe.Web.Application
                     throw new Exception("The input could not be parsed.");
                 }
 
+                if (latitude < -90 || latitude > 90)
+                {
+                    throw new Exception("Invalid Latitude.");
+                }
+                if (longitude < -180 || longitude > 180)
+                {
+                    throw new Exception("Invalid Longitude.");
+                }
+
                 coordinate.Latitude = latitude;
                 coordinate.Longitude = longitude;
 

@@ -39,45 +39,54 @@ namespace SportsGlobe.Web.Controllers
         [HttpPost]
         public IActionResult Add([FromForm] AddStadiumViewModel data)
         {
-            if(data.SelectedSports.Length == 0)
+            try
             {
-                throw new Exception("You must choose at least one sport.!");
-            }
-
-            // check if sports have valid ids
-            var sports = _context.Sports.ToList();
-            foreach (int id in data.SelectedSports)
-            {
-                if (!sports.Any(s => s.Id == id))
+                if (data.SelectedSports.Length == 0)
                 {
-                    throw new Exception("Invalid Sports Ids!");
+                    throw new Exception("You must choose at least one sport!");
                 }
+
+                // check if sports have valid ids
+                var sports = _context.Sports.ToList();
+                foreach (int id in data.SelectedSports)
+                {
+                    if (!sports.Any(s => s.Id == id))
+                    {
+                        throw new Exception("Invalid Sports Ids!");
+                    }
+                }
+
+                Coordinate coordinate = CoordinatesService.ParseFromString(data.LatLongInput);
+                data.Latitude = coordinate.Latitude;
+                data.Longitude = coordinate.Longitude;
+
+                Stadium stadium = new Stadium()
+                {
+                    Name = data.Name.Trim(),
+                    Latitude = data.Latitude,
+                    Longitude = data.Longitude,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                };
+
+                _context.Stadiums.Add(stadium);
+                foreach (int id in data.SelectedSports)
+                {
+                    stadium.Sports.Add(sports.FirstOrDefault(x => x.Id == id));
+                }
+                if (_context.SaveChanges() > 0)
+                {
+                    TempData["Status"] = "Stadium has been added successfully.";
+                    return RedirectToAction("Index");
+                }
+                throw new Exception("There was an error!");
+            }
+            catch(Exception e)
+            {
+                TempData["Error"] = e.Message;
+                return RedirectToAction("Add");
             }
 
-            Coordinate coordinate = CoordinatesService.ParseFromString(data.LatLongInput);
-            data.Latitude = coordinate.Latitude;
-            data.Longitude = coordinate.Longitude;
-
-            Stadium stadium = new Stadium()
-            {
-                Name = data.Name.Trim(),
-                Latitude = data.Latitude,
-                Longitude = data.Longitude,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-            };
-            
-            _context.Stadiums.Add(stadium);
-            foreach(int id in data.SelectedSports)
-            {
-                stadium.Sports.Add(sports.FirstOrDefault(x=>x.Id==id));
-            }
-            if(_context.SaveChanges() > 0)
-            {
-                TempData["Status"] = "Stadium has been added successfully.";
-                return RedirectToAction("Index");
-            }
-            throw new Exception("There was an error!");
         }
     }
 }

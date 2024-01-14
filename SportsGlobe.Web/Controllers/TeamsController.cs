@@ -43,28 +43,40 @@ namespace SportsGlobe.Web.Controllers
         [HttpPost]
         public IActionResult Add([FromForm]AddTeamViewModel data,int? sportId)
         {
-            Team team = new Team()
+            try
             {
-                Name = data.Name.Trim(),
-                SportId = data.SelectedSportId,
-                StadiumId = data.SelectedStadiumId,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-            };
-            string logoUrl = "https://uploads.dbmilos.com/sportsglobe/default.png";
-            if (!string.IsNullOrEmpty(data.LogoUrl))
-            {
-                logoUrl = data.LogoUrl.Trim();
-            }
-            team.LogoUrl = logoUrl;
+                if(data.SelectedStadiumId < 1)
+                {
+                    throw new Exception("You must select a stadium.");
+                }
+                Team team = new Team()
+                {
+                    Name = data.Name.Trim(),
+                    SportId = data.SelectedSportId,
+                    StadiumId = data.SelectedStadiumId,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                };
+                string logoUrl = "https://uploads.dbmilos.com/sportsglobe/default.png";
+                if (!string.IsNullOrEmpty(data.LogoUrl))
+                {
+                    logoUrl = data.LogoUrl.Trim();
+                }
+                team.LogoUrl = logoUrl;
 
-            _context.Teams.Add(team);
-            if(_context.SaveChanges() > 0)
+                _context.Teams.Add(team);
+                if (_context.SaveChanges() > 0)
+                {
+                    TempData["Status"] = "Stadium has been added successfully.";
+                    return RedirectToAction("Add", new { SelectedSportId = data.SelectedSportId });
+                }
+                throw new Exception("There was an error!");
+            }
+            catch(Exception e)
             {
-                TempData["Status"] = "Stadium has been added successfully.";
+                TempData["Error"] = e.Message;
                 return RedirectToAction("Add", new { SelectedSportId = data.SelectedSportId });
             }
-            throw new Exception("There was an error!");
         }
     }
 }

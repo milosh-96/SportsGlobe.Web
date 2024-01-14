@@ -32,6 +32,7 @@
                 <div class="form-group mb-3">
                     <select asp-for="SelectedStadiumId" class="form-control" required>
                         <option disabled selected>--Select Stadium--</option>
+                        <option>None</option>
                         <optgroup label="@Model.SelectedSport.Name">
                             @foreach (var s in Model.SelectedSport.Stadiums)
                             {

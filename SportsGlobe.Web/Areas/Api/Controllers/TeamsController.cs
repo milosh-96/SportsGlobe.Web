@@ -18,12 +18,18 @@ namespace SportsGlobe.Web.Areas.Api.Controllers
             _dbContext = dbContext;
         }
 
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery]int? sportId)
         {
             List<Team> teams = new List<Team>();
-            teams.AddRange(await _dbContext.Teams
-                .Include(x=>x.Stadium)
-                .Include(x=>x.Sport). ToListAsync());
+            IQueryable<Team> query = _dbContext.Teams
+                .Include(x => x.Stadium)
+                .Include(x => x.Sport);
+            if(sportId.HasValue && sportId > 0)
+            {
+                query = query.Where(x => x.SportId == sportId);
+            }
+            teams.AddRange(
+                await query.ToListAsync());
             return new JsonResult(teams);
         }
     }

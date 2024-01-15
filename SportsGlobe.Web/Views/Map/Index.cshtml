@@ -24,81 +24,108 @@
     <script>
         //
         let map = L.map('map', { minZoom: 2 }).setView([47.75,19.42], 4);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-        let markers = L.markerClusterGroup({ maxClusterRadius: 30 });
-        // add data from the api
-        let teams = fetch("/api/teams")
-            .then((response) => { return response.json(); })
-            .then((data) => {
-                data.forEach((d) => {
-                    // html of popup //
-                    let content = '<div><strong>' + d.name + '</strong><p>Sport: ' + d.sport.name + '</p><p>Stadium: ' + d.stadium.name + '</p></div>';
-                    // create leaflet popup
-                    p = new L.Popup({ }).setContent(content);
-                    
-                    // set icon //
-                    icon = new L.Icon({
-                        iconUrl:d.logoUrl + "/32",
-                        iconSize: [32,32],
-                        anchor: [15,15]
-                    });
-                    // add marker to the layer
+        
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            loadSport(2,map);
+        });
 
-                    // marker
-                    let marker = L.marker([d.stadium.latitude, d.stadium.longitude], { icon: icon, title: d.name }).bindPopup(p)
-                    marker.on('mouseover', function (e) {
-                        this.openPopup();
-                    });
-                    marker.on('mouseout', function (e) {
-                        this.closePopup();
-                    });
-                    markers.addLayer(
-                        marker
-                    );
-
-                    // show preview of the cluster when mouse is over the cluster circle
-                    markers.on('clustermouseover', function (e) {
-                       
-                        teams = [];
-                        e.layer.getAllChildMarkers().forEach((m) => { teams.push(m.options.title); });
-                        console.log(e.containerPoint);
-
-                        clusterPreview = document.getElementById("cluster-preview");
-                        
-                        // hide already opened preview before opening this one
-                        clusterPreview.style.display = "none";
-                        
-                        // clear the contents of the div if other previews were opened
-                        clusterPreview.innerHTML = "";
-
-                        // show the preview
-                        clusterPreview.style.display = "block";
-
-                        // set the preview's location to the cluster location
-                        clusterPreview.style.left = e.containerPoint.x + 'px';
-                        clusterPreview.style.top = e.containerPoint.y + 'px';
-
-                        // init output holder
-                        output = "";
-
-                        // add each team to the output
-                        teams.sort().forEach(t => { output += '<p class="map__cluster-preview-item">' + t + '</p>' });
-
-                        clusterPreview.innerHTML = output;
-
-                    });
-                   
-                }
-                );
-
-                // hide preview when mouse leaves the cluster circle
-                markers.on('clustermouseout', function (e) {
-                    clusterPreview = document.getElementById("cluster-preview");
-                    clusterPreview.style.display = "none";
-                });
+        document.querySelectorAll("#sports-selector .item").forEach((el) => {
+            el.addEventListener("click", (event) => {
+                let sportId = event.target.dataset.sportId;
+                loadSport(sportId,map);
             });
-        map.addLayer(markers);
+        });
+
+        function loadSport(sportId,mapInstance) {
+            // clean old layers
+            mapInstance.eachLayer(function (layer) {
+                if (layer) {
+                    mapInstance.removeLayer(layer);
+                }
+            });
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(mapInstance);
+
+            //
+            let markers = L.markerClusterGroup({ maxClusterRadius: 30 });
+            // add data from the api
+            let teams = fetch("/api/teams?sportId="+sportId)
+                .then((response) => { return response.json(); })
+                .then((data) => {
+                    if (data.length > 0) {
+                        data.forEach((d) => {
+                            // html of popup //
+                            let content = '<div><strong>' + d.name + '</strong><p>Sport: ' + d.sport.name + '</p><p>Stadium: ' + d.stadium.name + '</p></div>';
+                            // create leaflet popup
+                            p = new L.Popup({}).setContent(content);
+
+                            // set icon //
+                            icon = new L.Icon({
+                                iconUrl: d.logoUrl + "/32",
+                                iconSize: [32, 32],
+                                anchor: [15, 15]
+                            });
+                            // add marker to the layer
+
+                            // marker
+                            let marker = L.marker([d.stadium.latitude, d.stadium.longitude], { icon: icon, title: d.name }).bindPopup(p)
+                            marker.on('mouseover', function (e) {
+                                this.openPopup();
+                            });
+                            marker.on('mouseout', function (e) {
+                                this.closePopup();
+                            });
+                            markers.addLayer(
+                                marker
+                            );
+
+                            // show preview of the cluster when mouse is over the cluster circle
+                            markers.on('clustermouseover', function (e) {
+
+                                teams = [];
+                                e.layer.getAllChildMarkers().forEach((m) => { teams.push(m.options.title); });
+
+                                clusterPreview = document.getElementById("cluster-preview");
+
+                                // hide already opened preview before opening this one
+                                clusterPreview.style.display = "none";
+
+                                // clear the contents of the div if other previews were opened
+                                clusterPreview.innerHTML = "";
+
+                                // show the preview
+                                clusterPreview.style.display = "block";
+
+                                // set the preview's location to the cluster location
+                                clusterPreview.style.left = e.containerPoint.x + 'px';
+                                clusterPreview.style.top = e.containerPoint.y + 'px';
+
+                                // init output holder
+                                output = "";
+
+                                // add each team to the output
+                                teams.sort().forEach(t => { output += '<p class="map__cluster-preview-item">' + t + '</p>' });
+
+                                clusterPreview.innerHTML = output;
+
+                            });
+
+                        }
+                        );
+
+                        mapInstance.panTo([data[0].stadium.latitude, data[0].stadium.longitude]);
+
+                        // hide preview when mouse leaves the cluster circle
+                        markers.on('clustermouseout', function (e) {
+                            clusterPreview = document.getElementById("cluster-preview");
+                            clusterPreview.style.display = "none";
+                        });
+                    }
+                });
+            mapInstance.addLayer(markers);
+        }
     </script>
 }

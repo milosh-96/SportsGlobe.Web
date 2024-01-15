@@ -14,17 +14,18 @@
         <div class="top-header__logo">
             Sports Globe
         </div>
+        <nav style="display:flex;flex-direction:column;" id="sports-selector">
+            <a class="item" data-sport-id="2" href="#football">Football (soccer)</a>
+            <a class="item" data-sport-id="3" href="#baseball">Baseball</a>
+            <a class="item" data-sport-id="4" href="#basketball">Basketball</a>
+            <a class="item" data-sport-id="7" href="#icehockey">Ice Hockey</a>
+        </nav>
     </header>
     
     <main role="main">
         @RenderBody()
     </main>
     <footer style="bottom:0; left: 0; position:absolute; z-index:999">
-        <nav>
-            <a asp-controller="Home" asp-action="About">About Us</a>
-            <a asp-controller="Home" asp-action="Contribute">Contribute</a>
-            <a asp-area="Identity" asp-page="/Account/Login">Login</a>
-        </nav>
         <div>
             &copy; @DateTime.UtcNow.Year - Sports Globe.
         </div>

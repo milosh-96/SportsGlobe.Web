@@ -1,0 +1,23 @@
+﻿@page
+@model SportsGlobe.Web.Pages.ContributeModel
+@{
+}
+<div>
+    <h2>@ViewData["Title"]</h2>
+
+    <p>
+        First of all, thank you for being interested to contribute to this project. There are so many
+        stadiums and teams on the world and building such a huge database requires a lot of time and work.
+    </p>
+    <p>
+        In order to add new teams you just have to do two things:
+        <ol>
+            <li><a asp-controller="Stadiums" asp-action="Add">Add Stadium</a></li>
+            <li>Add Team</li>
+        </ol>
+    </p>
+    <p>
+        When it comes to the team logo, it's enough to just provide external URL and we will transfer it to our servers.
+        Logos should be 512x512, but that's not requirement (we will correct them if needed).
+    </p>
+</div>

@@ -30,6 +30,7 @@ namespace SportsGlobe.Web.Areas.Api.Controllers
             }
             else if(sportName != null)
             {
+                sportName = sportName.Replace("-", " ");
                 query = query.Where(x => x.Sport.Name.ToLower() == sportName.ToLower());
             }
             teams.AddRange(

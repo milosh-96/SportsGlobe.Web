@@ -27,17 +27,23 @@
         
         
         document.addEventListener("DOMContentLoaded", () => {
-            loadSport(2,map);
+            let sportName = "football";
+
+            let urlHash = window.location.hash;
+
+            if (urlHash) { 
+                sportName = urlHash.replace("#", "");
+            }
+            loadSport(sportName,map);
         });
 
         document.querySelectorAll("#sports-selector .item").forEach((el) => {
             el.addEventListener("click", (event) => {
-                let sportId = event.target.dataset.sportId;
-                loadSport(sportId,map);
+                loadSport(event.target.attributes.href.nodeValue.replace("#",""),map);
             });
         });
 
-        function loadSport(sportId,mapInstance) {
+        function loadSport(sportName,mapInstance) {
             // clean old layers
             mapInstance.eachLayer(function (layer) {
                 if (layer) {
@@ -52,7 +58,7 @@
             //
             let markers = L.markerClusterGroup({ maxClusterRadius: 30 });
             // add data from the api
-            let teams = fetch("/api/teams?sportId="+sportId)
+            let teams = fetch("/api/teams?sportName=" + sportName)
                 .then((response) => { return response.json(); })
                 .then((data) => {
                     if (data.length > 0) {
@@ -118,6 +124,12 @@
 
                         mapInstance.panTo([data[0].stadium.latitude, data[0].stadium.longitude]);
 
+                        // hide preview when the map is clicked the cluster circle
+                        mapInstance.on('click', function (e) {
+                            clusterPreview = document.getElementById("cluster-preview");
+                            clusterPreview.style.display = "none";
+                        });
+                        
                         // hide preview when mouse leaves the cluster circle
                         markers.on('clustermouseout', function (e) {
                             clusterPreview = document.getElementById("cluster-preview");

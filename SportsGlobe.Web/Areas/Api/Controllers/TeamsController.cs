@@ -18,7 +18,7 @@ namespace SportsGlobe.Web.Areas.Api.Controllers
             _dbContext = dbContext;
         }
 
-        public async Task<IActionResult> Get([FromQuery]int? sportId)
+        public async Task<IActionResult> Get([FromQuery]int? sportId, [FromQuery]string? sportName)
         {
             List<Team> teams = new List<Team>();
             IQueryable<Team> query = _dbContext.Teams
@@ -27,6 +27,10 @@ namespace SportsGlobe.Web.Areas.Api.Controllers
             if(sportId.HasValue && sportId > 0)
             {
                 query = query.Where(x => x.SportId == sportId);
+            }
+            else if(sportName != null)
+            {
+                query = query.Where(x => x.Sport.Name.ToLower() == sportName.ToLower());
             }
             teams.AddRange(
                 await query.ToListAsync());

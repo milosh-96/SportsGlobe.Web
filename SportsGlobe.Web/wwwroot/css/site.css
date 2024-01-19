@@ -37,7 +37,7 @@ header#top-header {
 
 @media(min-width:992px) {
     header#top-header {
-        width: 10vw;
+        width: 20vw;
     }
 }
 

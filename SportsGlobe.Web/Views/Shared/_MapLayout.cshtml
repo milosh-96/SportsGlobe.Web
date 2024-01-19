@@ -1,4 +1,17 @@
-﻿<!DOCTYPE html>
+﻿@using SportsGlobe.Web.Domain
+@{
+    List<Sport> sports = new List<Sport>();
+
+    if(ViewData["Sports"] != null)
+    {
+        if(ViewData["Sports"] is List<Sport>)
+        {
+            sports.AddRange((List<Sport>)ViewData["Sports"]);
+        }
+    }
+
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -14,12 +27,15 @@
         <div class="top-header__logo">
             Sports Globe
         </div>
-        <nav style="display:flex;flex-direction:column;" id="sports-selector">
-            <a class="item" href="#football">Football (soccer)</a>
-            <a class="item" href="#baseball">Baseball</a>
-            <a class="item" href="#basketball">Basketball</a>
-            <a class="item" href="#ice-hockey">Ice Hockey</a>
-        </nav>
+        @if(sports.Count > 0)
+        {
+            <nav style="display:flex;flex-direction:column;" id="sports-selector">
+                @foreach(var sport in sports)
+                {
+                    <a class="item" href="#@sport.Name.ToLower().Replace(" ","-")">@sport.Name</a>
+                }
+            </nav>
+        }
     </header>
     
     <main role="main">

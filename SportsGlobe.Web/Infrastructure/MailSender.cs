@@ -2,7 +2,6 @@
 using SportsGlobe.Web.Domain.Settings;
 using System.Net.Mail;
 using System.Net;
-using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 
 namespace SportsGlobe.Web.Infrastructure
 {

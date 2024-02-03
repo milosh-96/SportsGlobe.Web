@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using SportsGlobe.Web.Data;
 using SportsGlobe.Web.Domain;
+using SportsGlobe.Web.Infrastructure;
 
 namespace SportsGlobe.Web
 {
@@ -16,10 +18,12 @@ namespace SportsGlobe.Web
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+            // add email sender //
+            builder.Services.AddScoped<IEmailSender, MailSender>();
 
             var app = builder.Build();
 
